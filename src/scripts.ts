@@ -27,6 +27,18 @@ const XL = 48
     O O O O O O O O
 */
 
+// card styles
+const colors = ['red', 'green', 'blue', 'yellow', 'navy', 'cyan',
+                'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue']
+// const emojis = ['😆', '😂', '🤪', '😵‍💫', '🥸', '😩',
+//                 '😡', '😈', '💀', '👽', '💯', '🤙']
+
+if (!localStorage.getItem('wins')) {
+    localStorage.setItem('wins', '0')
+}
+
+
+let board_size = S
 
 const timer_span = document.getElementById('time')
 let timer:NodeJS.Timer = setInterval(()=>{})
@@ -71,14 +83,18 @@ const create_start_button = () => {
 
 // speles biegu ekrans
 const game_over = () => {
+    // uztaisa game over screen div
     document.body.removeChild(game_grid)
     let screen = document.createElement('div')
     screen.id = 'info-container'
+    // parbauda vai atvera visas kartis
     points*2 == board_size ? screen.innerHTML = 'YOU WIN' : screen.innerHTML = 'YOU LOSE'
+    // izveido restart pogu
     let restart_button = document.createElement('div')
     restart_button.id = 'restart-button'
     restart_button.className = 'btn'
     restart_button.innerHTML = 'RESTART'
+
     restart_button.addEventListener('click', () => {
         screen.remove()
         resetGame()
@@ -91,8 +107,6 @@ const game_over = () => {
 
 
 let options = ['change_size', 'change_color']
-
-
 const menu = document.getElementById('menu')
 menu.addEventListener('mouseenter', () => {
     menu.style.height = (30*(options.length+1) + 10*options.length)+'px'
@@ -101,6 +115,12 @@ menu.addEventListener('mouseenter', () => {
 menu.addEventListener('mouseleave', () => {
     menu.style.height = '30px'
 })
+
+const update_stats_span = (span: HTMLElement, new_val:number) => {
+    let [text, count] = span.innerHTML.split(' ', 1)
+    span.innerHTML = `${text} ${new_val}`
+}
+
 
 
 create_start_button()
@@ -114,19 +134,8 @@ let max_moves:number
 // gajienu span elements
 const moves_span = document.getElementById('moves')
 
-let wins = 0
-const wins_span = document.getElementById('wins')
 
 
-const update_stats_span = (span: HTMLElement, new_val:number) => {
-    let [text, count] = span.innerHTML.split(' ', 1)
-    span.innerHTML = `${text} ${new_val}`
-}
-
-const colors = ['red', 'green', 'blue', 'yellow', 'navy', 'cyan',
-                'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue']
-// const emojis = ['😆', '😂', '🤪', '😵‍💫', '🥸', '😩',
-//                 '😡', '😈', '💀', '👽', '💯', '🤙']
 // flip un change BG
 const showCard = (card:card) => {
     //card.innerHTML = card.value+''
@@ -166,8 +175,10 @@ const resetGame = () => {
     create_start_button()  
 }
 
+const wins_span = document.getElementById('wins')
+let wins = +localStorage.getItem('wins')
+update_stats_span(wins_span, wins)
 
-let board_size = S
 
 // izveido number[] kas satur karsu vertibas, un tas samaisa vietam
 let card_values:number[] = []
@@ -219,6 +230,9 @@ const handleCardClick = (card:card) => {
             if (points*2 == board_size) {
 
                 wins += 1
+
+                localStorage.setItem('wins', wins+'')
+
                 update_stats_span(wins_span, wins)
 
                 setTimeout(game_over, 400)

@@ -1,9 +1,9 @@
-import { getShuffledCards, updateStatsSpan, card, loadWinCount } from './assets/libs/helper'
-import {SMALL, MEDIUM, LARGE, XLARGE} from './assets/libs/consts'
+import { getShuffledCards, updateStatsSpan, card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
+import {SMALL, MEDIUM, LARGE, XLARGE, colors} from './assets/libs/consts'
 import { showCard, hideCard } from './assets/libs/animations'
 
 
-let board_size = MEDIUM
+let board_size = loadSavedSize()
 
 let cards_found = 0
 let moves = 0
@@ -23,6 +23,7 @@ const timer_span = document.getElementById('time')
 const menu = document.getElementById('menu')
 const moves_span = document.getElementById('moves')
 const wins_span = document.getElementById('wins') 
+const root = document.querySelector(':root') as HTMLElement
 
 
 // card click handler
@@ -126,8 +127,8 @@ const create_grid = (rows:number, columns:number) => {
         let card = document.createElement('div') as card
         card.className = `btn card`
         card.value = card_values[i] // randomizets arr
-        //card.innerHTML = ''+card_values[i] // janonem
 
+        card.innerHTML = ''+card_values[i] + ' ' + colors[card.value] // janonem
         // pievienu event handler un pievieno karti gridam
         card.addEventListener('click', () => {
             handleCardClick(card)
@@ -164,7 +165,7 @@ const gameOver = () => {
 
 
 // reseto status, samaisa kartis un uzliek jaunu start pogu
-const resetGame = () => {
+const resetGame = (skip_start_btn:boolean = false) => {
     cards_found = 0
     moves = 0
     time = 0
@@ -174,10 +175,16 @@ const resetGame = () => {
     updateStatsSpan(moves_span, moves)
     updateStatsSpan(timer_span, time)
     clearInterval(timer)
-    createStartButton()  
+
+    let start_button = createStartButton() 
+    if (skip_start_btn) {
+        start_button.click()
+    }
+
 }
 
 
+// uztaisa menu pogas
 const createMenuBtn = (fn:Function, innerHTML:string='') => {
     let menu_btn = document.createElement('div')
     menu_btn.className = 'menu-btn'
@@ -187,21 +194,27 @@ const createMenuBtn = (fn:Function, innerHTML:string='') => {
     return menu_btn
 }
 
+// relaodo board ar jauno izmeru
 const changeBoardSize = (size:number) => {
+    board_size = size
+    card_values = getShuffledCards(board_size)
+    localStorage.setItem('board-size', ''+size)
     if (document.getElementById('start-button')) {
         document.getElementById('start-button').remove()
     }  
     if (document.getElementById('game-grid')) {
         document.getElementById('game-grid').remove()
+
+        resetGame(true)
+        return
     }
     if (document.getElementById('info-container')) {
         document.getElementById('info-container').remove()
     }
-    board_size = size
-    card_values = getShuffledCards(board_size)
     resetGame()
 }
 
+// poga lai switchotu starp izmeriem
 let change_size_btn = createMenuBtn(() => {
     let sizes = [SMALL, MEDIUM, LARGE, XLARGE] 
     if (board_size == XLARGE) {
@@ -211,22 +224,36 @@ let change_size_btn = createMenuBtn(() => {
     }
     changeBoardSize(board_size)
     change_size_btn.innerHTML = ''+board_size
+
 }, ''+board_size)
 
+// poga lai mainitu krasu
 createMenuBtn(()=> {
-    console.log('bruh')
+    let color_picker = document.createElement('input')
+    color_picker.type = 'color'
+    color_picker.click()
+    color_picker.value = localStorage.getItem('accent-color')
+    console.log(root)
+    color_picker.addEventListener('input', () => {
+        root.style.setProperty('--accent-color', color_picker.value)
+        localStorage.setItem('accent-color', color_picker.value)
+    })
 }, 'C')
 
 
-
-//menu.appendChild()
+// expand menu
 menu.addEventListener('mouseenter', () => {
+    menu.style.transition = '0.2s'
     menu.style.height = ((40*menu.childElementCount)-10)+'px'
 })
 menu.addEventListener('mouseleave', () => {
     menu.style.height = '30px'
+    setTimeout(() => {
+        menu.style.transition = '0s'
+    }, 200)
 })
 
 
+root.style.setProperty('--accent-color', loadSavedColor())
 updateStatsSpan(wins_span, wins)
 createStartButton()

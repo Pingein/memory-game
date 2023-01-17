@@ -29,6 +29,8 @@ export const XLARGE = 48
 
 // card styles
 export const colors = ['red', 'green', 'blue', 'yellow', 'navy', 'cyan',
-                'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue']
+                       'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue',
+                       'chocolate', 'chartreuse', 'cornflowerblue', 'darkslateblue', 'deeppink', 'darkviolet',
+                       'gold', 'lime', 'mediumseagreen', 'maroon', 'palevioletred', 'plum']
 // export const emojis = ['😆', '😂', '🤪', '😵‍💫', '🥸', '😩',
 //                        '😡', '😈', '💀', '👽', '💯', '🤙']

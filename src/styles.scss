@@ -24,7 +24,6 @@ body {
 #menu {
     width: 30px;
     height: 30px;
-
     position: absolute;
     left: 10px;
     top: 10px;
@@ -44,7 +43,7 @@ body {
     border: 2px solid var(--accent-color);
     border-radius: 10px;
 
-    transition: 0.2s;
+    transition: 0.0s;
 }
 
 
@@ -83,7 +82,9 @@ body {
     align-items: center;
 
     background: url(./assets/images/pattern.svg);
-    font-size: 70px;
+    //font-size: 70px;
+    font-size: 16px;
+    font-weight: 500;
     
     box-shadow: 3px 3px 15px var(--menu-background-color);
     overflow: hidden;
@@ -128,7 +129,7 @@ body {
 
 .menu-btn {
     cursor: pointer;
-    
+
     width: 30px;
     height: 30px;
 

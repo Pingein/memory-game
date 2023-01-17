@@ -25,10 +25,28 @@ const loadWinCount = () => {
 }
 
 
+const loadSavedColor = () => {
+    console.log(localStorage.getItem('accent-color'))
+    if (!localStorage.getItem('accent-color')) {
+        localStorage.setItem('accent-color', '#e94b4b')
+    }
+    return localStorage.getItem('accent-color')
+}
+
+
+const loadSavedSize = () => {
+    console.log(localStorage.getItem('board-size'))
+    if (!localStorage.getItem('board-size')) {
+        localStorage.setItem('board-size', '6')
+    }
+    return +localStorage.getItem('board-size')
+}
+
+
 // vertibai un lai var pievienot velvienu neredzamu variable, kas ir karts vertiba
 class card extends HTMLDivElement {
     value: number
 }
 
 
-export {getShuffledCards, updateStatsSpan, card, loadWinCount}
+export { getShuffledCards, updateStatsSpan, card, loadWinCount, loadSavedColor, loadSavedSize }

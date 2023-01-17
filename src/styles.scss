@@ -24,11 +24,14 @@ body {
 
     display: flex;
 
+    gap: 10px;
+
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
+    padding: 5px;
 }
 
 
@@ -79,3 +82,18 @@ body {
 }
 
 
+#info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    font-size: 62px;
+    font-weight: 400;
+    color: var(--accent-color)
+}
+
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: 48;
+}

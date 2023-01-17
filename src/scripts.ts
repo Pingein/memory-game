@@ -28,6 +28,18 @@ const XL = 48
 */
 
 
+const timer_span = document.getElementById('time')
+let timer:NodeJS.Timer = setInterval(()=>{})
+let time = 0
+const update_time = () => {
+    time += 1
+    update_stats_span(timer_span, time)
+}
+const clear_time = () => {
+    time = 0
+    update_time()
+}
+
 
 const create_start_button = ():HTMLDivElement => {
     let start_button = document.createElement('div')
@@ -35,6 +47,7 @@ const create_start_button = ():HTMLDivElement => {
     start_button.className = 'btn'
     start_button.innerHTML = 'START'
     start_button.addEventListener('click', () => {
+        timer = setInterval(update_time, 1000)
         start_button.remove()
         //start_button.style.display = 'none'
         switch (board_size) {
@@ -57,6 +70,40 @@ const create_start_button = ():HTMLDivElement => {
 }
 
 
+const game_over = (message:string) => {
+    let screen = document.createElement('div')
+    screen.id = 'info-container'
+    screen.innerHTML = message
+    // screen.addEventListener('click', () => {
+
+    // })
+    document.body.appendChild(screen)
+    let restart_button = document.createElement('div')
+    restart_button.id = 'restart-button'
+    restart_button.className = 'btn'
+    restart_button.innerHTML = 'RESTART'
+    restart_button.addEventListener('click', () => {
+        screen.remove()
+        resetGame()
+    })
+    screen.appendChild(restart_button)
+    clearInterval(timer)
+}
+
+
+let options = ['change_size', 'change_color']
+
+
+const menu = document.getElementById('menu')
+menu.addEventListener('mouseenter', () => {
+    menu.style.height = (30*(options.length+1) + 10*options.length)+'px'
+
+})
+menu.addEventListener('mouseleave', () => {
+    menu.style.height = '30px'
+})
+
+
 create_start_button()
 
 
@@ -72,20 +119,43 @@ let wins = 0
 const wins_span = document.getElementById('wins')
 
 
-const timer_span = document.getElementById('time')
-
-
-
-
 const update_stats_span = (span: HTMLElement, new_val:number) => {
     let [text, count] = span.innerHTML.split(' ', 1)
     span.innerHTML = `${text} ${new_val}`
 }
 
+const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'cyan',
+                'yellowgreen', 'white', 'pink', 'salmon', 'coral', 'lightblue']
 
 
+const showCard = (card:card) => {
+    card.style.opacity = '0.8'
+    card.innerHTML = card.value+''
+    card.style.backgroundColor = colors[card.value]
+}
+const hideCard = (card:card) => {
+    setTimeout(() => {
+        card.innerHTML = ''
+        card.style.opacity = '1'
+        card.style.backgroundColor = null
+    }, 200)
+}
 
 let points = 0
+
+
+const resetGame = () => {
+    //document.body.removeChild(game_grid)
+    points = 0
+    moves = 0
+    time = 0
+    hand = []
+    card_values.sort((a,b) => Math.random()-0.5)
+    update_stats_span(moves_span, moves)
+    update_stats_span(timer_span, time)
+    //update_time()
+    create_start_button()  
+}
 
 
 let board_size = S
@@ -99,78 +169,59 @@ for (let i = 0; i<board_size/2; i++){
 card_values.sort((a,b) => Math.random()-0.5)
 
 
-// variable kas pasaka vai si ir pirma vai otra karts kas tiek nemta
-let first = true
+
+
 // sets kas satur izveleto karsu vertibu, max 2
 let hand:card[] = []
 // card click handler
 const handleCardClick = (card:card) => {
-    console.log(card.value)
-    console.log(hand)
-
-
+    showCard(card)
 
     // ja pirma karts
-    if (first) {
+    if (hand.length == 0) {
         hand.push(card)
-        card.style.opacity = '0.7'
-        first = false
     }
 
     // ja otra karts
     else {
         hand.push(card)
         moves += 1
+        update_stats_span(moves_span, moves)
 
-
-        // parbauda vai nav exceedots max moves
+        // parbauda vai nav exceedots max moves, lose condition
         if (moves > max_moves) {
-            // start button popup
-
-            
-
-            moves = 0
-            update_stats_span(moves_span, 0)
+            // game over screen
+            document.body.removeChild(game_grid)
+            game_over('YOU LOSE')
         }
 
         
-        update_stats_span(moves_span, moves)
+        
     
         // parbauda vai vienada vertiba , un vai atskirigi card objekti
         if (hand[0].value == hand[1].value && hand[0] != hand[1]) {
 
             // run ja izveleta pareiza karts
             points += 1
-            console.log(points)
-            hand.forEach(card => card.style.opacity = '0.1')
-
-            // run ja beidzas neatvertas kartis
+            
+            // run ja atver visas kartis, win condition
             if (points*2 == board_size) {
 
-                // pievieno W, reseto points, shufflo card_values
                 wins += 1
-                points = 0
-                card_values.sort((a,b) => Math.random()-0.5)
-                // moves: nomaina uz nulle, wins: uz wins
-                update_stats_span(moves_span, 0)
                 update_stats_span(wins_span, wins)
 
-                // nonem grid
-                document.body.removeChild(document.getElementById('game-grid'))
-                
-                create_start_button()
-                
+                document.body.removeChild(game_grid)
+                game_over('YOU WIN')
             }
 
         }
         else {
-
             // run ja izveleta nepareiza karts
-            hand[0].style.opacity = '1'
+            hand.forEach(card => hideCard(card))
+            
         }
         // notira izvilktas kartis un atkal nem pirmo karti
         hand = []
-        first = true
     }
 }
 
@@ -192,7 +243,7 @@ const create_grid = (rows:number, columns:number) => {
     game_grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`
 
     // seto max moves
-    max_moves = rows*columns*2
+    max_moves = rows*columns
 
     // katru reizi uztaisa jaunu elementu un pievieno grid
     for (let i = 0; i<rows*columns; i++) {
@@ -200,7 +251,7 @@ const create_grid = (rows:number, columns:number) => {
 
         card.value = card_values[i]
 
-        card.innerHTML = ''+card_values[i] // janonem
+        //card.innerHTML = ''+card_values[i] // janonem
         card.className = `btn card` // pedeja klase nosaka kur atrodas
         card.id = ''+i
         card.addEventListener('click', () => {

@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap');
 
 :root {
-    --background-color: #4d4d4d;
+    --background-color: #3b3b3b;
+    --menu-background-color: #272727;
     --accent-color: #e94b4b;
 }
 
@@ -18,6 +19,7 @@ body {
 }
 
 #menu {
+    background-color: var(--menu-background-color);
     position: absolute;
     left: 10px;
     top: 10px;
@@ -59,6 +61,7 @@ body {
 
 .card {
     background: url(./assets/images/pattern.svg);
+    font-size: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -66,10 +69,12 @@ body {
     transition: 0.1s;
     width: 100%;
     justify-self: center;
-    box-shadow: 2px 2px 20px #343434;
+    box-shadow: 3px 3px 15px var(--menu-background-color);
+    overflow: hidden;
 }
 
 .stats {
+    background-color: var(--menu-background-color);
     position: absolute;
     bottom: 10px;
     left: 10px;

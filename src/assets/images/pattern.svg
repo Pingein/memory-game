@@ -1,4 +1,4 @@
 <svg xmlns='http://www.w3.org/2000/svg' width='16.5' height='32.877' transform='scale(1)'>
-<rect x='0' y='0' width='20%' height='20%' fill='none'/>
+<rect x='0' y='0' width='100%' height='100%' fill='#323232'/>
 <path d='M-5 2l5 10L5 2zm16.5 0l5 10 5-10zM8.25 4.438l-5 10h10zm-5 14l5 10.001 5-10zM0 20.878l-5 10H5zm16.5 0l-5 10h10z'  
-stroke-width='0.5' stroke='#343434' fill='none'/></svg>
+stroke-width='0.5' stroke='#696969' fill='none'/></svg>

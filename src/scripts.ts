@@ -66,15 +66,15 @@ const create_start_button = () => {
         }
     })
     document.body.appendChild(start_button)
-    //return start_button
+    return start_button
 }
 
 // speles biegu ekrans
-const game_over = (message:string) => {
+const game_over = () => {
     document.body.removeChild(game_grid)
     let screen = document.createElement('div')
     screen.id = 'info-container'
-    screen.innerHTML = message
+    points*2 == board_size ? screen.innerHTML = 'YOU WIN' : screen.innerHTML = 'YOU LOSE'
     let restart_button = document.createElement('div')
     restart_button.id = 'restart-button'
     restart_button.className = 'btn'
@@ -123,41 +123,38 @@ const update_stats_span = (span: HTMLElement, new_val:number) => {
     span.innerHTML = `${text} ${new_val}`
 }
 
-const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'cyan',
-                'yellowgreen', 'white', 'pink', 'salmon', 'coral', 'lightblue']
-
-
+const colors = ['red', 'green', 'blue', 'yellow', 'navy', 'cyan',
+                'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue']
+// const emojis = ['😆', '😂', '🤪', '😵‍💫', '🥸', '😩',
+//                 '😡', '😈', '💀', '👽', '💯', '🤙']
+// flip un change BG
 const showCard = (card:card) => {
     //card.innerHTML = card.value+''
     card.style.width = '0%'
     setTimeout(() => {
+        //card.innerHTML = emojis[card.value]  
+
         card.style.width = '100%'
-        card.style.transform = '0s'
         card.style.background = colors[card.value]
-        card.style.transform = '0.1s'
     }, 70)
 }
-
+// flip un change BG
 const hideCard = (card:card) => {
     // lai var paspet atcereties
     setTimeout(()=>{
         card.style.width = '0%'
         setTimeout(() => {
+            //card.innerHTML = ''
             card.style.width = '100%'
-            card.style.transform = '0s'
             card.style.background = 'url(./assets/images/pattern.svg)'
-            card.style.transform = '0.1s'
         }, 70)
     }, 350)
-    
-
 }
 
 let points = 0
 
 
 const resetGame = () => {
-    //document.body.removeChild(game_grid)
     points = 0
     moves = 0
     time = 0
@@ -166,12 +163,11 @@ const resetGame = () => {
     card_values.sort((a,b) => Math.random()-0.5)
     update_stats_span(moves_span, moves)
     update_stats_span(timer_span, time)
-    //update_time()
     create_start_button()  
 }
 
 
-let board_size = M
+let board_size = S
 
 // izveido number[] kas satur karsu vertibas, un tas samaisa vietam
 let card_values:number[] = []
@@ -193,7 +189,6 @@ const handleCardClick = (card:card) => {
         return
     }
 
-    // parada karti
     showCard(card)
 
     // ja pirma karts
@@ -201,7 +196,6 @@ const handleCardClick = (card:card) => {
         hand.push(card)
     }
 
-    // ja otra karts
     else {
         hand.push(card)
         moves += 1
@@ -209,8 +203,7 @@ const handleCardClick = (card:card) => {
 
         // parbauda vai nav exceedots max moves, lose condition
         if (moves > max_moves) {
-            // game over screen
-            game_over('YOU LOSE')
+            setTimeout(game_over, 400)
         }
 
         // parbauda vai vienada vertiba , un vai atskirigi card objekti
@@ -228,7 +221,7 @@ const handleCardClick = (card:card) => {
                 wins += 1
                 update_stats_span(wins_span, wins)
 
-                game_over('YOU WIN')
+                setTimeout(game_over, 400)
             }
         }
         // run ja izveleta nepareiza karts
@@ -239,7 +232,6 @@ const handleCardClick = (card:card) => {
         hand = []
     }
 }
-
 
 
 const create_grid = (rows:number, columns:number) => {

@@ -46,7 +46,7 @@ const handleCardClick = (card:card) => {
 
         // parbauda vai nav exceedots max moves, lose condition
         if (moves > max_moves) {
-            setTimeout(game_over, 400)
+            setTimeout(gameOver, 400)
         }
 
         // parbauda vai vienada vertiba , un vai atskirigi card objekti
@@ -63,7 +63,7 @@ const handleCardClick = (card:card) => {
                 wins += 1
                 localStorage.setItem('wins', wins+'')
                 updateStatsSpan(wins_span, wins)
-                setTimeout(game_over, 400)
+                setTimeout(gameOver, 400)
             }
         }
         // run ja izveleta nepareiza karts
@@ -77,7 +77,7 @@ const handleCardClick = (card:card) => {
 
 
 // izveido 'start-button' elementu, saliek visas vertibas tam 
-const create_start_button = () => {
+const createStartButton = () => {
     let start_button = document.createElement('div')
     start_button.id = 'start-button'
     start_button.className = 'btn'
@@ -141,7 +141,7 @@ const create_grid = (rows:number, columns:number) => {
 
 
 // speles biegu ekrans
-const game_over = () => {
+const gameOver = () => {
     // uztaisa game over screen div
     document.body.removeChild(game_grid)
     let screen = document.createElement('div')
@@ -173,15 +173,55 @@ const resetGame = () => {
     card_values.sort((a,b) => Math.random()-0.5)
     updateStatsSpan(moves_span, moves)
     updateStatsSpan(timer_span, time)
-    create_start_button()  
+    clearInterval(timer)
+    createStartButton()  
 }
 
 
-// TODO jauztaisa settings menu
-let options = ['change_size', 'change_color']
-menu.addEventListener('mouseenter', () => {
-    menu.style.height = (30*(options.length+1) + 10*options.length)+'px'
+const createMenuBtn = (fn:Function, innerHTML:string='') => {
+    let menu_btn = document.createElement('div')
+    menu_btn.className = 'menu-btn'
+    menu_btn.innerHTML = innerHTML
+    menu_btn.addEventListener('click', ()=>{fn()})
+    menu.appendChild(menu_btn)
+    return menu_btn
+}
 
+const changeBoardSize = (size:number) => {
+    if (document.getElementById('start-button')) {
+        document.getElementById('start-button').remove()
+    }  
+    if (document.getElementById('game-grid')) {
+        document.getElementById('game-grid').remove()
+    }
+    if (document.getElementById('info-container')) {
+        document.getElementById('info-container').remove()
+    }
+    board_size = size
+    card_values = getShuffledCards(board_size)
+    resetGame()
+}
+
+let change_size_btn = createMenuBtn(() => {
+    let sizes = [SMALL, MEDIUM, LARGE, XLARGE] 
+    if (board_size == XLARGE) {
+        board_size = SMALL
+    } else {
+        board_size = sizes[sizes.indexOf(board_size)+1]
+    }
+    changeBoardSize(board_size)
+    change_size_btn.innerHTML = ''+board_size
+}, ''+board_size)
+
+createMenuBtn(()=> {
+    console.log('bruh')
+}, 'C')
+
+
+
+//menu.appendChild()
+menu.addEventListener('mouseenter', () => {
+    menu.style.height = ((40*menu.childElementCount)-10)+'px'
 })
 menu.addEventListener('mouseleave', () => {
     menu.style.height = '30px'
@@ -189,4 +229,4 @@ menu.addEventListener('mouseleave', () => {
 
 
 updateStatsSpan(wins_span, wins)
-create_start_button()
+createStartButton()

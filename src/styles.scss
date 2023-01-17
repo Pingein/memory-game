@@ -25,18 +25,26 @@ body {
     width: 30px;
     height: 30px;
 
+    position: absolute;
+    left: 10px;
+    top: 10px;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
+    overflow: hidden;
 
-    position: absolute;
-    left: 10px;
-    top: 10px;
+    color: var(--accent-color);
 
     padding: 5px;
     background-color: var(--menu-background-color);
+
+    border: 2px solid var(--accent-color);
+    border-radius: 10px;
+
+    transition: 0.2s;
 }
 
 
@@ -114,6 +122,21 @@ body {
 }
 
 #restart-button {
-    font-size: 48;
+    font-size: 48px;
     padding: 10px 20px;
+}
+
+.menu-btn {
+    cursor: pointer;
+    
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 26px;
+    font-weight: 100;
+    //overflow: hidden;
 }

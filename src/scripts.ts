@@ -266,7 +266,7 @@ const create_grid = (rows:number, columns:number) => {
 
         card.value = card_values[i] // randomizets arr
         card.className = `btn card`
-        card.id = ''+i
+        //card.id = ''+i
         //card.innerHTML = ''+card_values[i] // janonem
 
         // pievienu event handler un pievieno karti gridam
@@ -282,5 +282,6 @@ const create_grid = (rows:number, columns:number) => {
 
 
 class card extends HTMLDivElement {
+    className = 'btn card'
     value: number
 }

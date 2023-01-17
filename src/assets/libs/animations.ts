@@ -1,8 +1,8 @@
-import { card } from './helper'
+import { Card } from './helper'
 import { colors } from './consts'
 
 //flip un change BG
-const showCard = (card:card) => {
+const showCard = (card:Card) => {
     //card.innerHTML = card.value+''
     card.style.width = '0%'
     setTimeout(() => {
@@ -13,7 +13,7 @@ const showCard = (card:card) => {
     }, 70)
 }
 // flip un change BG
-const hideCard = (card:card) => {
+const hideCard = (card:Card) => {
     // lai var paspet atcereties
     setTimeout(()=>{
         card.style.width = '0%'
@@ -24,5 +24,8 @@ const hideCard = (card:card) => {
         }, 70)
     }, 350)
 }
+
+
+
 
 export {showCard, hideCard}

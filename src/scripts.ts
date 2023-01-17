@@ -1,4 +1,4 @@
-import { getShuffledCards, updateStatsSpan, card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
+import { getShuffledCards, updateStatsSpan, Card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
 import {SMALL, MEDIUM, LARGE, XLARGE, colors} from './assets/libs/consts'
 import { showCard, hideCard } from './assets/libs/animations'
 
@@ -16,7 +16,7 @@ let game_grid:HTMLDivElement // game-grid elements
 
 let card_values = getShuffledCards(board_size)
 let uncovered:number[] = [] // sets kas satur jau atverto karsu vertibas
-let hand:card[] = [] // sets kas satur izveleto karsu vertibu, max 2
+let hand:Card[] = [] // sets kas satur izveleto karsu vertibu, max 2
 
 
 const timer_span = document.getElementById('time')
@@ -27,7 +27,7 @@ const root = document.querySelector(':root') as HTMLElement
 
 
 // card click handler
-const handleCardClick = (card:card) => {
+const handleCardClick = (card:Card) => {
 
     // skipo ja vertiba jau ir bijusi atverta
     if (uncovered.includes(card.value) || hand.includes(card)) {
@@ -124,11 +124,11 @@ const create_grid = (rows:number, columns:number) => {
 
     for (let i = 0; i<rows*columns; i++) {
         // izveido jaunu elementu, card, pievieno vertibu un id
-        let card = document.createElement('div') as card
+        let card = document.createElement('div') as Card
         card.className = `btn card`
         card.value = card_values[i] // randomizets arr
 
-        card.innerHTML = ''+card_values[i] + ' ' + colors[card.value] // janonem
+        //card.innerHTML = ''+card_values[i] + ' ' + colors[card.value] // janonem
         // pievienu event handler un pievieno karti gridam
         card.addEventListener('click', () => {
             handleCardClick(card)
@@ -185,10 +185,11 @@ const resetGame = (skip_start_btn:boolean = false) => {
 
 
 // uztaisa menu pogas
-const createMenuBtn = (fn:Function, innerHTML:string='') => {
+const createMenuBtn = (fn:Function, innerHTML:string='', tooltip:string='') => {
     let menu_btn = document.createElement('div')
     menu_btn.className = 'menu-btn'
     menu_btn.innerHTML = innerHTML
+    menu_btn.title = tooltip
     menu_btn.addEventListener('click', ()=>{fn()})
     menu.appendChild(menu_btn)
     return menu_btn
@@ -225,20 +226,41 @@ let change_size_btn = createMenuBtn(() => {
     changeBoardSize(board_size)
     change_size_btn.innerHTML = ''+board_size
 
-}, ''+board_size)
+}, ''+board_size, 'Change Board Size')
 
 // poga lai mainitu krasu
-createMenuBtn(()=> {
+createMenuBtn(() => {
     let color_picker = document.createElement('input')
     color_picker.type = 'color'
     color_picker.click()
     color_picker.value = localStorage.getItem('accent-color')
-    console.log(root)
     color_picker.addEventListener('input', () => {
         root.style.setProperty('--accent-color', color_picker.value)
         localStorage.setItem('accent-color', color_picker.value)
     })
-}, 'C')
+}, 'C', 'Change color')
+
+//poga lai resetotu visu back uz default
+createMenuBtn(() => {
+    localStorage.setItem('accent-color', '#e94b4b')
+    localStorage.setItem('wins', '0')
+    localStorage.setItem('board-size', ''+MEDIUM)
+    document.location.reload()
+}, '۩', 'Restore')
+
+//poga lai paraditu karsu vertibas
+createMenuBtn(() => {
+    let cards = [...game_grid.children] as Card[]
+    if (cards[0].innerHTML == '') {
+        cards.forEach(card => {
+            card.innerHTML = (card as Card).value + ''
+        })
+    } else {
+        cards.forEach(card => {
+            card.innerHTML = ''
+        })
+    }
+}, '۞', 'See card values')
 
 
 // expand menu

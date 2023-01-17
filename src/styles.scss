@@ -24,7 +24,7 @@ body {
 #menu {
     width: 30px;
     height: 30px;
-    position: absolute;
+    position: fixed;
     left: 10px;
     top: 10px;
 
@@ -65,7 +65,7 @@ body {
 .grid {
     width: 70vw;
     max-width: 620px;
-    height: 70vh;
+    height: 60vh;
 
     display: grid;
     gap: 15px;
@@ -86,27 +86,39 @@ body {
     font-size: 16px;
     font-weight: 500;
     
-    box-shadow: 3px 3px 15px var(--menu-background-color);
+    box-shadow: 3px 4px 15px var(--menu-background-color);
     overflow: hidden;
     transition: 0.1s;
+
+    &:hover {
+        // taka mainit width
+        //transform: rotateY(180deg);
+        
+        // palielina
+        transform: scale(1.05,1.05);
+
+        // pacel
+        // margin-top: -10px;
+        // margin-bottom: 10px;
+    }
 }
 
 .stats {
     min-width: 200px;
 
-    position: absolute;
+    position: fixed;
     bottom: 10px;
     left: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 
     background-color: var(--menu-background-color);
     
     font-size: 24px;
     color: var(--accent-color);
 
-    padding: 15px;
+    padding: 10px;
     border: 2px solid var(--accent-color);
     border-radius: 10px;
 }
@@ -129,6 +141,7 @@ body {
 
 .menu-btn {
     cursor: pointer;
+    user-select: none;
 
     width: 30px;
     height: 30px;
@@ -140,4 +153,87 @@ body {
     font-size: 26px;
     font-weight: 100;
     //overflow: hidden;
+}
+
+
+@media all and (max-width: 576px)  {
+    body {
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    #menu {
+        width: 30px;
+        height: 30px;
+
+        left: 5px;
+        top: 5px;
+
+        gap: 10px;
+        padding: 3px;
+        border-radius: 8px;
+    }
+    
+    
+    #start-button {
+        font-size: 36px;
+        padding: 10px 30px;
+        margin-bottom: 150px;
+    }
+    
+    .btn {
+
+        border-radius: 10px;
+    }
+    
+    .grid {
+        width: 70vw;
+        max-width: 620px;
+        height: 60vh;
+    
+        gap: 8px;
+        
+        top: -110px;
+    }
+    
+    .card {
+        width: 100%;
+
+        font-size: 16px;
+        font-weight: 500;
+
+    }
+    
+    .stats {
+        min-width: 120px;
+    
+        bottom: 10px;
+        left: 10px;
+        gap: 4px;
+
+        font-size: 16px;
+        font-weight: 100;
+        padding: 5px;
+
+        border-radius: 10px;
+    }
+    
+    
+    #info-container {
+        gap: 15px;
+        margin-bottom: 150px;
+        font-size: 62px;
+    }
+    
+    #restart-button {
+        font-size: 24px;
+        padding: 5px 10px;
+    }
+    
+    .menu-btn {
+        width: 30px;
+        height: 30px;
+
+        font-size: 26px;
+    }
 }

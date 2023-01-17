@@ -126,6 +126,7 @@ const create_grid = (rows:number, columns:number) => {
         // izveido jaunu elementu, card, pievieno vertibu un id
         let card = document.createElement('div') as Card
         card.className = `btn card`
+        card.style.fontSize = (90-board_size)+'px'
         card.value = card_values[i] // randomizets arr
 
         //card.innerHTML = ''+card_values[i] + ' ' + colors[card.value] // janonem

@@ -32,5 +32,7 @@ export const colors = ['red', 'green', 'blue', 'yellow', 'navy', 'cyan',
                        'yellowgreen', 'white', 'salmon', 'pink', 'coral', 'lightblue',
                        'chocolate', 'chartreuse', 'cornflowerblue', 'darkslateblue', 'deeppink', 'darkviolet',
                        'gold', 'lime', 'mediumseagreen', 'maroon', 'palevioletred', 'plum'].sort((a,b)=>Math.random()-0.5)
-// export const emojis = ['😆', '😂', '🤪', '😵‍💫', '🥸', '😩',
-//                        '😡', '😈', '💀', '👽', '💯', '🤙']
+export const emojis = ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', 
+                       '🍉', '🍇', '🍓', '🫐', '🥒', '🍄',
+                       '🍈', '🍒', '🍑', '🥭', '🍍', '🥦',
+                       '🥥', '🥝', '🍅', '🍆', '🥑', '🥬'].sort((a,b)=>Math.random()-0.5)

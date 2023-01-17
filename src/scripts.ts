@@ -41,15 +41,15 @@ const clear_time = () => {
 }
 
 
-const create_start_button = ():HTMLDivElement => {
+const create_start_button = () => {
     let start_button = document.createElement('div')
     start_button.id = 'start-button'
     start_button.className = 'btn'
     start_button.innerHTML = 'START'
     start_button.addEventListener('click', () => {
+        // uzsak timeri, katru sekundi executo update_time()
         timer = setInterval(update_time, 1000)
         start_button.remove()
-        //start_button.style.display = 'none'
         switch (board_size) {
             case S:
                 create_grid(2, 3)
@@ -66,18 +66,15 @@ const create_start_button = ():HTMLDivElement => {
         }
     })
     document.body.appendChild(start_button)
-    return start_button
+    //return start_button
 }
 
-
+// speles biegu ekrans
 const game_over = (message:string) => {
+    document.body.removeChild(game_grid)
     let screen = document.createElement('div')
     screen.id = 'info-container'
     screen.innerHTML = message
-    // screen.addEventListener('click', () => {
-
-    // })
-    document.body.appendChild(screen)
     let restart_button = document.createElement('div')
     restart_button.id = 'restart-button'
     restart_button.className = 'btn'
@@ -86,7 +83,9 @@ const game_over = (message:string) => {
         screen.remove()
         resetGame()
     })
+    document.body.appendChild(screen)
     screen.appendChild(restart_button)
+    
     clearInterval(timer)
 }
 
@@ -111,7 +110,7 @@ let game_grid:HTMLDivElement
 
 // gajienu skaits
 let moves = 0
-let max_moves = 0
+let max_moves:number
 // gajienu span elements
 const moves_span = document.getElementById('moves')
 
@@ -129,16 +128,29 @@ const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'cyan',
 
 
 const showCard = (card:card) => {
-    card.style.opacity = '0.8'
-    card.innerHTML = card.value+''
-    card.style.backgroundColor = colors[card.value]
-}
-const hideCard = (card:card) => {
+    //card.innerHTML = card.value+''
+    card.style.width = '0%'
     setTimeout(() => {
-        card.innerHTML = ''
-        card.style.opacity = '1'
-        card.style.backgroundColor = null
-    }, 200)
+        card.style.width = '100%'
+        card.style.transform = '0s'
+        card.style.background = colors[card.value]
+        card.style.transform = '0.1s'
+    }, 70)
+}
+
+const hideCard = (card:card) => {
+    // lai var paspet atcereties
+    setTimeout(()=>{
+        card.style.width = '0%'
+        setTimeout(() => {
+            card.style.width = '100%'
+            card.style.transform = '0s'
+            card.style.background = 'url(./assets/images/pattern.svg)'
+            card.style.transform = '0.1s'
+        }, 70)
+    }, 350)
+    
+
 }
 
 let points = 0
@@ -150,6 +162,7 @@ const resetGame = () => {
     moves = 0
     time = 0
     hand = []
+    uncovered = []
     card_values.sort((a,b) => Math.random()-0.5)
     update_stats_span(moves_span, moves)
     update_stats_span(timer_span, time)
@@ -158,7 +171,7 @@ const resetGame = () => {
 }
 
 
-let board_size = S
+let board_size = M
 
 // izveido number[] kas satur karsu vertibas, un tas samaisa vietam
 let card_values:number[] = []
@@ -168,13 +181,19 @@ for (let i = 0; i<board_size/2; i++){
 }
 card_values.sort((a,b) => Math.random()-0.5)
 
-
-
-
+// sets kas satur jau atverto karsu vertibas
+let uncovered:number[] = []
 // sets kas satur izveleto karsu vertibu, max 2
 let hand:card[] = []
+
 // card click handler
 const handleCardClick = (card:card) => {
+    // skipo ja vertiba jau ir bijusi atverta
+    if (uncovered.includes(card.value) || hand.includes(card)) {
+        return
+    }
+
+    // parada karti
     showCard(card)
 
     // ja pirma karts
@@ -191,34 +210,30 @@ const handleCardClick = (card:card) => {
         // parbauda vai nav exceedots max moves, lose condition
         if (moves > max_moves) {
             // game over screen
-            document.body.removeChild(game_grid)
             game_over('YOU LOSE')
         }
 
-        
-        
-    
         // parbauda vai vienada vertiba , un vai atskirigi card objekti
         if (hand[0].value == hand[1].value && hand[0] != hand[1]) {
 
+            // pievieno atvertajam kartim
+            uncovered.push(hand[0].value)
+
             // run ja izveleta pareiza karts
             points += 1
-            
+
             // run ja atver visas kartis, win condition
             if (points*2 == board_size) {
 
                 wins += 1
                 update_stats_span(wins_span, wins)
 
-                document.body.removeChild(game_grid)
                 game_over('YOU WIN')
             }
-
         }
+        // run ja izveleta nepareiza karts
         else {
-            // run ja izveleta nepareiza karts
-            hand.forEach(card => hideCard(card))
-            
+            hand.forEach(card => hideCard(card))     
         }
         // notira izvilktas kartis un atkal nem pirmo karti
         hand = []
@@ -227,42 +242,37 @@ const handleCardClick = (card:card) => {
 
 
 
-
-
-
-
-
 const create_grid = (rows:number, columns:number) => {
-
+    // izveido jaunu elementu, izmaina vertibas un css
     game_grid = document.createElement('div')
     game_grid.id = 'game-grid'
     game_grid.className = 'grid'
-
-    // norada grid izvietojumu
     game_grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`
     game_grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`
 
-    // seto max moves
-    max_moves = rows*columns
+    // seto max moves 
+    max_moves = rows*columns*1.5
 
-    // katru reizi uztaisa jaunu elementu un pievieno grid
+
     for (let i = 0; i<rows*columns; i++) {
+        // izveido jaunu elementu, card, pievieno vertibu un id
         let card = document.createElement('div') as card
 
-        card.value = card_values[i]
-
-        //card.innerHTML = ''+card_values[i] // janonem
-        card.className = `btn card` // pedeja klase nosaka kur atrodas
+        card.value = card_values[i] // randomizets arr
+        card.className = `btn card`
         card.id = ''+i
+        //card.innerHTML = ''+card_values[i] // janonem
+
+        // pievienu event handler un pievieno karti gridam
         card.addEventListener('click', () => {
             handleCardClick(card)
         })
         game_grid.appendChild(card)
-
     }
-
+    // uzliek grid uz ekrana
     document.body.appendChild(game_grid)
 }
+
 
 
 class card extends HTMLDivElement {

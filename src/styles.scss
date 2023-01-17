@@ -2,7 +2,7 @@
 
 :root {
     --background-color: #4d4d4d;
-    --accent-color: #77d8d3;//#e94b4b;
+    --accent-color: #e94b4b;
 }
 
 body {
@@ -58,11 +58,15 @@ body {
 }
 
 .card {
+    background: url(./assets/images/pattern.svg);
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 400;
-    //transition: 0.2s;
+    transition: 0.1s;
+    width: 100%;
+    justify-self: center;
+    box-shadow: 2px 2px 20px #343434;
 }
 
 .stats {

@@ -1,16 +1,16 @@
-import { Scores, getShuffledCards, updateStatsSpan, Card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
-import {SMALL, MEDIUM, LARGE, XLARGE, colors} from './assets/libs/consts'
+import { Scores, round, getShuffledCards, updateStatsSpan, Card, loadLocalStorage } from './assets/libs/helper'
+import { SMALL, MEDIUM, LARGE, XLARGE } from './assets/libs/consts'
 import { showCard, hideCard } from './assets/libs/animations'
 
 
-let board_size = loadSavedSize()
+let board_size = +loadLocalStorage('board-size', '6')
 
 let cards_found = 0
 let moves = 0
 let time = 0
-let wins = loadWinCount()
+let wins = +loadLocalStorage('wins', '0')
 let timer:NodeJS.Timer // time interval kas ik pec sekundes laikam pieliek 1
-let scores:Scores = new Scores()
+let scores:Scores = new Scores(loadLocalStorage('saved-scores', JSON.stringify([])))
 
 let max_moves:number // seto gajienus kad izveido grid
 let game_grid:HTMLDivElement // game-grid elements
@@ -65,7 +65,9 @@ const handleCardClick = (card:Card) => {
                 wins += 1
                 // highest scores
                 scores.update(moves, time, board_size)
+
                 localStorage.setItem('wins', wins+'')
+
                 updateStatsSpan(wins_span, wins)
                 setTimeout(gameOver, 400)
             }
@@ -89,9 +91,10 @@ const createStartButton = () => {
     start_button.addEventListener('click', () => {
         // uzsak timeri, katru sekundi executo update_time()
         timer = setInterval(() => {
-            time += 1
-            updateStatsSpan(timer_span, time)
-        }, 1000)
+            time += 0.1
+            updateStatsSpan(timer_span, round(time, 1))
+        }, 100)
+        document.getElementById('highscores') && document.getElementById('highscores').remove()
         start_button.remove()
         switch (board_size) {
             case SMALL:
@@ -190,17 +193,6 @@ const resetGame = (skip_start_btn:boolean = false) => {
 }
 
 
-// uztaisa menu pogas
-const createMenuBtn = (fn:Function, innerHTML:string='', tooltip:string='') => {
-    let menu_btn = document.createElement('div')
-    menu_btn.className = 'menu-btn'
-    menu_btn.innerHTML = innerHTML
-    menu_btn.title = tooltip
-    menu_btn.addEventListener('click', ()=>{fn()})
-    menu.appendChild(menu_btn)
-    return menu_btn
-}
-
 // relaodo board ar jauno izmeru
 const changeBoardSize = (size:number) => {
     board_size = size
@@ -219,6 +211,25 @@ const changeBoardSize = (size:number) => {
         document.getElementById('info-container').remove()
     }
     resetGame()
+}
+
+
+const createDivElement = (innerHTML:string) => {
+    let div = document.createElement('div')
+    div.innerHTML = innerHTML
+    return div
+}
+
+
+// uztaisa menu pogas
+const createMenuBtn = (fn:Function, innerHTML:string='', tooltip:string='') => {
+    let menu_btn = document.createElement('div')
+    menu_btn.className = 'menu-btn'
+    menu_btn.innerHTML = innerHTML
+    menu_btn.title = tooltip
+    menu_btn.addEventListener('click', ()=>{fn()})
+    menu.appendChild(menu_btn)
+    return menu_btn
 }
 
 // poga lai switchotu starp izmeriem
@@ -251,8 +262,9 @@ createMenuBtn(() => {
     localStorage.setItem('accent-color', '#e94b4b')
     localStorage.setItem('wins', '0')
     localStorage.setItem('board-size', ''+MEDIUM)
+    localStorage.setItem('saved-scores', JSON.stringify([]))
     document.location.reload()
-}, '۩', 'Restore')
+}, '۩', 'Reset stats')
 
 //poga lai paraditu karsu vertibas
 createMenuBtn(() => {
@@ -270,9 +282,27 @@ createMenuBtn(() => {
 
 // izprinte highscores
 createMenuBtn(() => {
-    //console.log(scores.saveScores())
-    // console.log(scores.getTop5(board_size, 'time'))
-    // console.log(scores.getTop5(board_size, 'moves'))
+
+    if (document.getElementById('game-grid')) {
+        return
+    }
+
+    let highscores_div = document.createElement('div')
+
+    highscores_div.id = 'highscores'
+    document.body.appendChild(highscores_div)
+
+    highscores_div.appendChild(createDivElement('time'))
+    highscores_div.appendChild(createDivElement('moves'))
+    
+
+    for (let i = 0; i<scores.getTop5(board_size, 'time').length; i++) {
+        highscores_div.appendChild(createDivElement(''+scores.getTop5(board_size, 'time')[i]))
+        highscores_div.appendChild(createDivElement(''+scores.getTop5(board_size, 'moves')[i]))
+    }
+
+    console.log('time ', scores.getTop5(board_size, 'time'))
+    console.log('moves ', scores.getTop5(board_size, 'moves'))
 }, '𓀤', 'Print highscores')
 
 
@@ -289,6 +319,6 @@ menu.addEventListener('mouseleave', () => {
 })
 
 
-root.style.setProperty('--accent-color', loadSavedColor())
+root.style.setProperty('--accent-color', loadLocalStorage('accent-color', '#e94b4b'))
 updateStatsSpan(wins_span, wins)
 createStartButton()

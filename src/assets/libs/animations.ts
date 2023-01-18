@@ -21,7 +21,7 @@ const hideCard = (card:Card) => {
             card.style.width = '100%'
             card.style.background = 'url(./assets/images/pattern.svg)'
         }, 70)
-    }, 350)
+    }, 400)
 }
 
 

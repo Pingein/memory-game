@@ -1,4 +1,4 @@
-import { getShuffledCards, updateStatsSpan, Card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
+import { Scores, getShuffledCards, updateStatsSpan, Card, loadWinCount, loadSavedColor, loadSavedSize } from './assets/libs/helper'
 import {SMALL, MEDIUM, LARGE, XLARGE, colors} from './assets/libs/consts'
 import { showCard, hideCard } from './assets/libs/animations'
 
@@ -10,6 +10,7 @@ let moves = 0
 let time = 0
 let wins = loadWinCount()
 let timer:NodeJS.Timer // time interval kas ik pec sekundes laikam pieliek 1
+let scores:Scores = new Scores()
 
 let max_moves:number // seto gajienus kad izveido grid
 let game_grid:HTMLDivElement // game-grid elements
@@ -62,6 +63,8 @@ const handleCardClick = (card:Card) => {
             if (cards_found == board_size) {
                 // pivieno uzvaru, un updato localStorage
                 wins += 1
+                // highest scores
+                scores.update(moves, time, board_size)
                 localStorage.setItem('wins', wins+'')
                 updateStatsSpan(wins_span, wins)
                 setTimeout(gameOver, 400)
@@ -119,7 +122,9 @@ const create_grid = (rows:number, columns:number) => {
     game_grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`
 
     // seto max moves 
-    max_moves = rows*columns*1.5
+    //max_moves = rows*columns*1.5
+    max_moves = Math.round(rows*columns*2.2-rows*columns**0.4)-4
+    console.log(max_moves)
 
 
     for (let i = 0; i<rows*columns; i++) {
@@ -233,8 +238,8 @@ let change_size_btn = createMenuBtn(() => {
 createMenuBtn(() => {
     let color_picker = document.createElement('input')
     color_picker.type = 'color'
-    color_picker.click()
     color_picker.value = localStorage.getItem('accent-color')
+    color_picker.click()
     color_picker.addEventListener('input', () => {
         root.style.setProperty('--accent-color', color_picker.value)
         localStorage.setItem('accent-color', color_picker.value)
@@ -262,6 +267,13 @@ createMenuBtn(() => {
         })
     }
 }, '۞', 'See card values')
+
+// izprinte highscores
+createMenuBtn(() => {
+    //console.log(scores.saveScores())
+    // console.log(scores.getTop5(board_size, 'time'))
+    // console.log(scores.getTop5(board_size, 'moves'))
+}, '𓀤', 'Print highscores')
 
 
 // expand menu

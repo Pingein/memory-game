@@ -126,7 +126,7 @@ const create_grid = (rows:number, columns:number) => {
 
     // seto max moves 
     //max_moves = rows*columns*1.5
-    max_moves = Math.round(rows*columns*2.2-rows*columns**0.4)-4
+    max_moves = rows*columns*1.7
     console.log(max_moves)
 
 
@@ -162,7 +162,7 @@ const gameOver = () => {
     let restart_button = document.createElement('div')
     restart_button.id = 'restart-button'
     restart_button.className = 'btn'
-    restart_button.innerHTML = 'RESTART'
+    cards_found == board_size ? restart_button.innerHTML = 'PLAY AGAIN' : restart_button.innerHTML = 'TRY AGAIN'
     restart_button.addEventListener('click', () => {
         screen.remove()
         resetGame()
@@ -282,20 +282,21 @@ createMenuBtn(() => {
 
 // izprinte highscores
 createMenuBtn(() => {
-
+    if (document.getElementById('highscores')) {
+        document.getElementById('highscores').remove()
+        return
+    }
     if (document.getElementById('game-grid')) {
         return
     }
 
     let highscores_div = document.createElement('div')
-
     highscores_div.id = 'highscores'
     document.body.appendChild(highscores_div)
 
     highscores_div.appendChild(createDivElement('time'))
     highscores_div.appendChild(createDivElement('moves'))
     
-
     for (let i = 0; i<scores.getTop5(board_size, 'time').length; i++) {
         highscores_div.appendChild(createDivElement(''+scores.getTop5(board_size, 'time')[i]))
         highscores_div.appendChild(createDivElement(''+scores.getTop5(board_size, 'moves')[i]))
@@ -308,8 +309,8 @@ createMenuBtn(() => {
 
 // expand menu
 menu.addEventListener('mouseenter', () => {
-    menu.style.transition = '0.2s'
-    menu.style.height = ((40*menu.childElementCount)-10)+'px'
+    menu.style.transition = '0.3s'
+    menu.style.height = (40*menu.childElementCount)+'px'
 })
 menu.addEventListener('mouseleave', () => {
     menu.style.height = '30px'
